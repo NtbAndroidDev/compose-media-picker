@@ -12,6 +12,15 @@
 
     <application>
         <!--
+          PhotoPickerActivity: launched via PhotoPickerContract from ANY project type.
+          Not exported — only accessible within the same app process.
+        -->
+        <activity
+            android:name="com.example.picker_photo.ui.picker.PhotoPickerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Picker.Activity" />
+
+        <!--
           FileProvider is declared here so consuming apps don't need to add it.
           Authority uses ${applicationId} so it's unique per app at merge time.
         -->
@@ -25,5 +34,6 @@
                 android:resource="@xml/picker_file_paths" />
         </provider>
     </application>
+
 
 </manifest>
