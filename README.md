@@ -46,11 +46,13 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.1")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.2")
 }
 ```
 
+> ⚠️ **Minimum requirement**: Android Gradle Plugin **8.6.1+**
 > Check [Releases](https://github.com/NtbAndroidDev/compose-media-picker/releases) for the latest version.
+
 
 
 
