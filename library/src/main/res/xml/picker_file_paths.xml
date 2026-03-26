@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Maps to Context.getExternalCacheDir()/picker/ for camera temp files -->
+    <external-cache-path name="picker_media" path="picker/" />
+</paths>

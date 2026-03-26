@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "picker-photo"
+rootProject.name = "compose-media-picker"
 include(":app")
- 
+include(":library")
