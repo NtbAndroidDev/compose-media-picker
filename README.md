@@ -46,7 +46,7 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.5")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.6")
 }
 ```
 
@@ -103,14 +103,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.btnPickMultiple).setOnClickListener {
-            // 2. Launch with a single method call
-            pickerHelper.launchMultiple(maxSelection = 10)
+        findViewById<Button>(R.id.btnAction).setOnClickListener {
             
-            // Or pick a single item:
-            // pickerHelper.launchSingle()
+            // 🎯 OPTION 1: Mở đầy đủ (Gallery + Camera) để chọn nhiều ảnh
+            pickerHelper.openPicker(maxSelection = 10)
             
-            // Or customize fully:
+            // 🖼️ OPTION 2: Chỉ mở giao diện Thư viện (Gallery)
+            // pickerHelper.openGallery(maxSelection = 1)
+            
+            // 📸 OPTION 3: Mở Camera để CHỤP ẢNH
+            // pickerHelper.takePhoto()
+            
+            // 🎥 OPTION 4: Mở Camera để QUAY VIDEO
+            // pickerHelper.recordVideo()
+
+            // ⚙️ OPTION 5: Tuỳ biến hoàn toàn theo ý bạn
             // pickerHelper.launch(PickerConfig(selectionMode = SelectionMode.SINGLE...))
         }
     }

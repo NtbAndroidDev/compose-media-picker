@@ -37,36 +37,61 @@ class MediaPickerHelper(
         }
 
     /**
-     * Launch picker with custom [PickerConfig]
+     * Launch with custom [PickerConfig]
      */
     fun launch(config: PickerConfig = PickerConfig()) {
         launcher.launch(config)
     }
 
     /**
-     * Convenient method to pick a single media item.
-     * @param launchMode Choose between PhotoOnly, VideoOnly, or Combined (default).
+     * 🖼️ OPTION: Mở Thư viện (Gallery) để chọn ảnh/video
+     * @param maxSelection Số lượng tối đa (Mặc định: 1)
      */
-    fun launchSingle(launchMode: LaunchMode = LaunchMode.Combined) {
+    fun openGallery(maxSelection: Int = 1) {
+        val selectionMode = if (maxSelection > 1) SelectionMode.MULTIPLE else SelectionMode.SINGLE
         launcher.launch(
             PickerConfig(
-                selectionMode = SelectionMode.SINGLE,
-                launchMode = launchMode
+                selectionMode = selectionMode,
+                maxSelectionCount = maxSelection,
+                launchMode = LaunchMode.GalleryOnly
             )
         )
     }
 
     /**
-     * Convenient method to pick multiple media items.
-     * @param maxSelection Maximum number of items the user can select.
-     * @param launchMode Choose between PhotoOnly, VideoOnly, or Combined (default).
+     * 📸 OPTION: Mở Camera để CHỤP ẢNH
      */
-    fun launchMultiple(maxSelection: Int = 10, launchMode: LaunchMode = LaunchMode.Combined) {
+    fun takePhoto() {
         launcher.launch(
             PickerConfig(
-                selectionMode = SelectionMode.MULTIPLE,
+                selectionMode = SelectionMode.SINGLE,
+                launchMode = LaunchMode.CameraOnly(com.example.picker_photo.data.model.CameraType.PHOTO)
+            )
+        )
+    }
+
+    /**
+     * 🎥 OPTION: Mở Camera để QUAY VIDEO
+     */
+    fun recordVideo() {
+        launcher.launch(
+            PickerConfig(
+                selectionMode = SelectionMode.SINGLE,
+                launchMode = LaunchMode.CameraOnly(com.example.picker_photo.data.model.CameraType.VIDEO)
+            )
+        )
+    }
+
+    /**
+     * ⚙️ OPTION: Mở giao diện Đầy Đủ (Combined - Cho phép chọn cả Gallery và Camera)
+     */
+    fun openPicker(maxSelection: Int = 1) {
+        val selectionMode = if (maxSelection > 1) SelectionMode.MULTIPLE else SelectionMode.SINGLE
+        launcher.launch(
+            PickerConfig(
+                selectionMode = selectionMode,
                 maxSelectionCount = maxSelection,
-                launchMode = launchMode
+                launchMode = LaunchMode.Combined
             )
         )
     }
