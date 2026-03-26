@@ -1,12 +1,12 @@
 [versions]
-agp = "9.0.1"
+agp = "8.6.1"
 coreKtx = "1.13.1"               # last version compatible with AGP < 8.9.1
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.3"    # last version compatible with AGP < 8.9.1
 activityCompose = "1.9.3"        # last version compatible with AGP < 8.9.1
-kotlin = "2.0.21"
+kotlin = "1.9.24"
 composeBom = "2024.06.00"        # maps to Compose 1.6.7 / Material3 1.2.1
 coil = "2.7.0"
 lifecycleViewmodelCompose = "2.8.3"
@@ -34,6 +34,6 @@ coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
 
