@@ -46,7 +46,7 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.4")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.5")
 }
 ```
 
@@ -84,28 +84,38 @@ PhotoPickerEntryPoint(
 )
 ```
 
-### Option B — View-based / Fragment / Activity projects
+### 2️⃣ View-based Projects (XML / Activities / Fragments)
 
-Use `PhotoPickerContract` with the standard `ActivityResultAPI`:
+You don't need Compose to use this library. We provide a handy **`MediaPickerHelper`** out-of-the-box!
 
 ```kotlin
-// 1. Register in Activity / Fragment onCreate
-val pickMedia = registerForActivityResult(PhotoPickerContract()) { uris ->
-    if (uris != null) {
-        // uris: List<Uri> — selected media
+class MainActivity : AppCompatActivity() {
+
+    // 1. Initialize Helper BEFORE the activity gets to the STARTED state (onCreate is perfect)
+    private val pickerHelper = MediaPickerHelper(this) { uris ->
+        uris?.forEach { uri ->
+            Log.d("Picker", "Selected Uri: $uri")
+            // Handle your image or video!
+        }
     }
-    // uris == null → user cancelled
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        findViewById<Button>(R.id.btnPickMultiple).setOnClickListener {
+            // 2. Launch with a single method call
+            pickerHelper.launchMultiple(maxSelection = 10)
+            
+            // Or pick a single item:
+            // pickerHelper.launchSingle()
+            
+            // Or customize fully:
+            // pickerHelper.launch(PickerConfig(selectionMode = SelectionMode.SINGLE...))
+        }
+    }
 }
-
-// 2. Launch anywhere
-pickMedia.launch(
-    PickerConfig(
-        selectionMode     = SelectionMode.MULTIPLE,
-        maxSelectionCount = 10
-    )
-)
 ```
-
 > ✅ No `AndroidManifest.xml` changes needed — `PhotoPickerActivity` and all permissions are declared in the library manifest and **merged automatically**.
 
 
