@@ -46,11 +46,12 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:<version>")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.0")
 }
 ```
 
-> Replace `<version>` with the [latest release tag](https://github.com/NtbAndroidDev/compose-media-picker/releases).
+> Check [Releases](https://github.com/NtbAndroidDev/compose-media-picker/releases) for the latest version.
+
 
 ---
 
