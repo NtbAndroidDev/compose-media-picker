@@ -1,6 +1,11 @@
 # 📸 compose-media-picker
 
-A modern, extensible **Android media picker library** built with **Jetpack Compose** and clean **MVVM architecture**. Supports camera capture, gallery browsing, multi-select, and a polished design system — all behind a single composable.
+[![](https://jitpack.io/v/NtbAndroidDev/compose-media-picker.svg)](https://jitpack.io/#NtbAndroidDev/compose-media-picker)
+![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)
+![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material3-blue)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+A modern, extensible **Android media picker library** built with **Jetpack Compose** and clean **MVVM architecture**. Supports camera capture, gallery browsing, multi-select with numbered badges, and a polished design system — all behind a **single composable**.
 
 ---
 
@@ -8,14 +13,44 @@ A modern, extensible **Android media picker library** built with **Jetpack Compo
 
 | Feature | Description |
 |---|---|
-| 📷 **Camera** | Take a photo or record a video, with instant preview |
+| 📷 **Camera** | Take a photo or record a video, with instant full-screen preview |
 | 🖼 **Gallery** | Browse device media with `All / Photos / Videos` filter chips |
 | 🔢 **Multi-select** | Numbered order badges (1, 2, 3…) show tap sequence |
 | ✅ **Single-select** | Tap-to-select/deselect with checkmark badge |
 | 👁 **Preview screen** | Review camera output before confirming; Retake supported |
 | 🎬 **Video thumbnails** | Auto-extracted via Coil `VideoFrameDecoder` |
 | 🎨 **Design system** | "Fluid Navigator" — tonal green palette, glassmorphism, spring animations |
-| 📦 **Library-ready** | One composable, one config object — drop into any project |
+| 📦 **Library ready** | One composable, one config object — no boilerplate in your app |
+
+---
+
+## 📦 Installation
+
+### Step 1 — Add JitPack repository
+
+In your root `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+### Step 2 — Add the dependency
+
+In your `app/build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.NtbAndroidDev:compose-media-picker:<version>")
+}
+```
+
+> Replace `<version>` with the [latest release tag](https://github.com/NtbAndroidDev/compose-media-picker/releases).
 
 ---
 
@@ -44,7 +79,7 @@ PhotoPickerEntryPoint(
 )
 ```
 
-> All permissions, camera launchers, FileProvider, and ViewModel wiring are handled **internally**.
+> ✅ Permissions, camera launchers, FileProvider, and ViewModel are all handled **internally**. No extras needed in your `AndroidManifest.xml`.
 
 ---
 
@@ -103,7 +138,7 @@ PickerConfig(Combined)
 **Preview Screen** (after camera capture):
 ```
 ┌────────────────────────────┐
-│ [✕]                        │  ← cancel, returns to previous screen
+│ [✕]                        │  ← cancel → returns to previous screen
 │                            │
 │   full-screen preview      │
 │   (▶ overlay for video)    │
@@ -116,84 +151,97 @@ PickerConfig(Combined)
 
 ## 🏗 Architecture
 
+### Module structure
+
 ```
-app/
-└── data/
-│   ├── model/          MediaItem, PickerConfig, PickerResult,
-│   │                   LaunchMode, MediaFilter, SelectionMode
-│   ├── source/         MediaLocalDataSource  (MediaStore queries on IO)
-│   └── repository/     MediaRepository       (Single Source of Truth)
-├── domain/
-│   └── GetMediaUseCase
-└── ui/
-    ├── picker/
-    │   ├── PhotoPickerEntryPoint.kt   ← public API composable
-    │   ├── PhotoPickerScreen.kt       ← stateless UI
-    │   ├── PhotoPickerViewModel.kt    ← state + events
-    │   └── PhotoPickerUiState.kt      ← sealed state & events
-    └── theme/                         Fluid Navigator design tokens
+compose-media-picker/
+├── library/                    ← Android Library (.aar) — published to JitPack
+│   ├── build.gradle.kts        (com.android.library + maven-publish)
+│   └── src/main/
+│       ├── AndroidManifest.xml (permissions + FileProvider — auto-merged into app)
+│       └── java/com/example/picker_photo/
+│           ├── data/
+│           │   ├── model/      MediaItem, PickerConfig, PickerResult,
+│           │   │               LaunchMode, MediaFilter, SelectionMode
+│           │   ├── source/     MediaLocalDataSource  (MediaStore on IO)
+│           │   └── repository/ MediaRepository
+│           ├── domain/
+│           │   └── GetMediaUseCase
+│           └── ui/
+│               ├── picker/     PhotoPickerEntryPoint ← public API
+│               │               PhotoPickerScreen, ViewModel, UiState
+│               └── theme/      Fluid Navigator design tokens
+│
+└── app/                        ← Demo application
+    └── MainActivity.kt         (shows library usage)
 ```
+
+### Layer responsibilities
+
+| Layer | Class | Responsibility |
+|---|---|---|
+| **Data** | `MediaLocalDataSource` | Queries `MediaStore` on `Dispatchers.IO` |
+| **Data** | `MediaRepository` | Single Source of Truth |
+| **Domain** | `GetMediaUseCase` | Business logic, filter application |
+| **UI** | `PhotoPickerViewModel` | `StateFlow` state + `Channel` one-shot events |
+| **UI** | `PhotoPickerEntryPoint` | Public composable — permissions, camera launchers |
+| **UI** | `PhotoPickerScreen` | Stateless Compose UI |
 
 ---
 
-## 🔐 Required Permissions
+## 🔐 Permissions & FileProvider
 
-Add to your **`AndroidManifest.xml`** (already included in the demo app):
+**No setup required!** The `:library` module's `AndroidManifest.xml` declares everything:
 
 ```xml
-<!-- Android 13+ -->
+<!-- These are automatically merged into your app's manifest -->
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
-<!-- Android 12 and below -->
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-
-<!-- Camera -->
 <uses-permission android:name="android.permission.CAMERA" />
-<uses-feature android:name="android.hardware.camera" android:required="false" />
-```
 
-And register the **FileProvider** for camera output URIs:
-
-```xml
 <provider
     android:name="androidx.core.content.FileProvider"
-    android:authorities="${applicationId}.picker.fileprovider"
-    android:exported="false"
-    android:grantUriPermissions="true">
-    <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/picker_file_paths" />
-</provider>
+    android:authorities="${applicationId}.picker.fileprovider" ... />
 ```
+
+Runtime permission requests are also handled internally by `PhotoPickerEntryPoint`.
 
 ---
 
 ## 🛠 Tech Stack
 
-| Layer | Library |
+| | Library / Version |
 |---|---|
 | UI | Jetpack Compose + Material 3 |
-| Image loading | [Coil](https://coil-kt.github.io/coil/) 2.7.0 + `coil-video` |
+| Image & video loading | [Coil](https://coil-kt.github.io/coil/) 2.7.0 + `coil-video` |
 | State management | `StateFlow` + `Channel` (one-shot events) |
-| DI | Manual (Hilt-ready via `ViewModelProvider.Factory`) |
+| ViewModel | `lifecycle-viewmodel-compose` 2.8.7 |
+| DI | Manual factory (Hilt/Koin-ready) |
 | Min SDK | 24 |
 | Target SDK | 36 |
+| Language | Kotlin 2.0.21 |
 
 ---
 
 ## 🗓 Roadmap
 
+- [x] Camera: photo + video capture with preview screen
+- [x] Gallery: multi-select with numbered badges
+- [x] Gallery: single-select with checkmark
+- [x] Video thumbnails (Coil VideoFrameDecoder)
+- [x] MediaFilter: All / Photos / Videos
+- [x] JitPack publishing
 - [ ] Hilt / Koin integration module
-- [ ] Crop & rotate after selection
-- [ ] Cloud media source (remote data source)
+- [ ] Image crop & rotate after selection
+- [ ] Cloud / remote media source support
 - [ ] Unit tests for ViewModel
-- [ ] Publish to Maven Central as an AAR library
+- [ ] Maven Central publishing
 
 ---
 
 ## 📄 License
 
 ```
-MIT License — feel free to use, modify, and distribute.
+MIT License — free to use, modify, and distribute.
 ```
