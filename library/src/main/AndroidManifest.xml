@@ -4,9 +4,7 @@
     <!-- Permissions declared here are merged into the consuming app's manifest -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
@@ -25,7 +23,7 @@
           Authority uses ${applicationId} so it's unique per app at merge time.
         -->
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="com.example.picker_photo.provider.PickerFileProvider"
             android:authorities="${applicationId}.picker.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
