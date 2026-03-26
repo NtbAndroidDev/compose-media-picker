@@ -46,23 +46,26 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.0")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.1")
 }
 ```
 
 > Check [Releases](https://github.com/NtbAndroidDev/compose-media-picker/releases) for the latest version.
 
 
+
 ---
 
 ## 🚀 Quick Start
+
+### Option A — Compose projects
 
 Drop `PhotoPickerEntryPoint` anywhere in your Compose hierarchy:
 
 ```kotlin
 PhotoPickerEntryPoint(
     config = PickerConfig(
-        launchMode        = LaunchMode.Combined,     // Camera + Library entry screen
+        launchMode        = LaunchMode.Combined,
         selectionMode     = SelectionMode.MULTIPLE,
         initialFilter     = MediaFilter.ALL,
         maxSelectionCount = 10,
@@ -72,7 +75,6 @@ PhotoPickerEntryPoint(
         when (result) {
             is PickerResult.Selected -> {
                 val uris: List<Uri> = result.uris
-                // use the selected media URIs
             }
             PickerResult.Cancelled -> { /* handle cancel */ }
         }
@@ -80,7 +82,31 @@ PhotoPickerEntryPoint(
 )
 ```
 
-> ✅ Permissions, camera launchers, FileProvider, and ViewModel are all handled **internally**. No extras needed in your `AndroidManifest.xml`.
+### Option B — View-based / Fragment / Activity projects
+
+Use `PhotoPickerContract` with the standard `ActivityResultAPI`:
+
+```kotlin
+// 1. Register in Activity / Fragment onCreate
+val pickMedia = registerForActivityResult(PhotoPickerContract()) { uris ->
+    if (uris != null) {
+        // uris: List<Uri> — selected media
+    }
+    // uris == null → user cancelled
+}
+
+// 2. Launch anywhere
+pickMedia.launch(
+    PickerConfig(
+        selectionMode     = SelectionMode.MULTIPLE,
+        maxSelectionCount = 10
+    )
+)
+```
+
+> ✅ No `AndroidManifest.xml` changes needed — `PhotoPickerActivity` and all permissions are declared in the library manifest and **merged automatically**.
+
+
 
 ---
 
