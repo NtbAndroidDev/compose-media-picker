@@ -46,7 +46,7 @@ In your `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.8")
+    implementation("com.github.NtbAndroidDev:compose-media-picker:1.0.9")
 }
 ```
 
