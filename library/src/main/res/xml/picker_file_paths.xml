@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <!-- Maps to Context.getExternalCacheDir()/picker/ for camera temp files -->
-    <external-cache-path name="picker_media" path="picker/" />
+    <!-- Camera temp files -->
+    <external-cache-path name="picker_media"   path="picker/" />
+    <!-- Cropped output files -->
+    <external-cache-path name="picker_cropped" path="picker_cropped/" />
+    <!-- Fallback internal cache (devices without external cache) -->
+    <cache-path name="picker_media_internal"   path="picker/" />
+    <cache-path name="picker_cropped_internal" path="picker_cropped/" />
 </paths>
