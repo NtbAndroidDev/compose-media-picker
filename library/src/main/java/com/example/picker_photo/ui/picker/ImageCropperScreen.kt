@@ -486,21 +486,43 @@ private suspend fun cropAndSave(
 ): Uri? = withContext(Dispatchers.IO) {
     val bm = rawBitmap ?: return@withContext null
     val cr = cropRect  ?: return@withContext null
+    if (imgScale <= 0f) return@withContext null
 
-    val iW    = bm.width  * imgScale;  val iH = bm.height * imgScale
+    val iW    = bm.width  * imgScale
+    val iH    = bm.height * imgScale
     val iLeft = (canvas.width  - iW) / 2f + imgOffset.x
     val iTop  = (canvas.height - iH) / 2f + imgOffset.y
-    val sX    = bm.width  / iW;        val sY = bm.height / iH
+    val sX    = bm.width  / iW
+    val sY    = bm.height / iH
 
-    val bx = ((cr.left  - iLeft) * sX).toInt().coerceIn(0, bm.width)
-    val by = ((cr.top   - iTop)  * sY).toInt().coerceIn(0, bm.height)
-    val bw = (cr.width  * sX).toInt().coerceIn(1, bm.width  - bx)
-    val bh = (cr.height * sY).toInt().coerceIn(1, bm.height - by)
+    // Map crop rect from canvas space → bitmap pixel space
+    val rawX = ((cr.left  - iLeft) * sX).toInt()
+    val rawY = ((cr.top   - iTop)  * sY).toInt()
+    val rawW = (cr.width  * sX).toInt()
+    val rawH = (cr.height * sY).toInt()
 
-    val cropped = Bitmap.createBitmap(bm, bx, by, bw, bh)
-    val dir  = File(context.externalCacheDir, "picker_cropped").also { it.mkdirs() }
+    // Clamp to valid bitmap bounds
+    val bx = rawX.coerceIn(0, bm.width  - 1)
+    val by = rawY.coerceIn(0, bm.height - 1)
+    val bw = rawW.coerceIn(1, bm.width  - bx)
+    val bh = rawH.coerceIn(1, bm.height - by)
+
+    val cropped = runCatching {
+        Bitmap.createBitmap(bm, bx, by, bw, bh)
+    }.getOrElse {
+        // Fallback: return the full bitmap if crop fails
+        bm
+    }
+
+    val cacheDir = context.externalCacheDir ?: context.cacheDir
+    val dir  = File(cacheDir, "picker_cropped").also { it.mkdirs() }
     val file = File(dir, "cropped_${System.currentTimeMillis()}.jpg")
-    FileOutputStream(file).use { out -> cropped.compress(Bitmap.CompressFormat.JPEG, 92, out) }
-    androidx.core.content.FileProvider.getUriForFile(
-        context, "${context.packageName}.picker.fileprovider", file)
+
+    runCatching {
+        FileOutputStream(file).use { out ->
+            cropped.compress(Bitmap.CompressFormat.JPEG, 92, out)
+        }
+        androidx.core.content.FileProvider.getUriForFile(
+            context, "${context.packageName}.picker.fileprovider", file)
+    }.getOrNull()
 }
