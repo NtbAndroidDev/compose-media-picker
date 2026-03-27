@@ -114,6 +114,24 @@ class PhotoPickerViewModel(
         _uiState.value = stateBeforePreview ?: PhotoPickerUiState.ModeEntry()
     }
 
+    /** User tapped the ✂️ Crop button on the Preview screen. */
+    fun onCropRequested() {
+        val p = _uiState.value as? PhotoPickerUiState.Preview ?: return
+        _uiState.value = p.copy(showCropper = true)
+    }
+
+    /** Cropper returned a new [croppedUri] — update preview URI and dismiss cropper. */
+    fun onCropCompleted(croppedUri: android.net.Uri) {
+        val p = _uiState.value as? PhotoPickerUiState.Preview ?: return
+        _uiState.value = p.copy(uri = croppedUri, showCropper = false)
+    }
+
+    /** User cancelled the cropper — go back to preview without changes. */
+    fun onCropCancelled() {
+        val p = _uiState.value as? PhotoPickerUiState.Preview ?: return
+        _uiState.value = p.copy(showCropper = false)
+    }
+
     // ── Filter ────────────────────────────────────────────────────────────────
 
     fun onFilterChanged(filter: MediaFilter) {

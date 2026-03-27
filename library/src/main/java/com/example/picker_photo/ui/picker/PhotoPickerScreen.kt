@@ -106,6 +106,10 @@ fun PhotoPickerScreen(
     onPreviewConfirm: () -> Unit,
     onPreviewRetake: () -> Unit,
     onPreviewCancel: () -> Unit,
+    // Crop callbacks
+    onCropRequested: () -> Unit = {},
+    onCropCompleted: (android.net.Uri) -> Unit = {},
+    onCropCancelled: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -139,13 +143,23 @@ fun PhotoPickerScreen(
                 }
             }
 
-            is PhotoPickerUiState.Preview ->
+            is PhotoPickerUiState.Preview -> {
                 PreviewContent(
                     state     = uiState,
                     onConfirm = onPreviewConfirm,
                     onRetake  = onPreviewRetake,
-                    onCancel  = onPreviewCancel
+                    onCancel  = onPreviewCancel,
+                    onCrop    = onCropRequested
                 )
+                // Cropper overlay — shown when user taps ✂️
+                if (uiState.showCropper) {
+                    ImageCropperScreen(
+                        sourceUri = uiState.uri,
+                        onCropped = onCropCompleted,
+                        onCancel  = onCropCancelled
+                    )
+                }
+            }
         }
     }
 }
@@ -296,7 +310,8 @@ private fun PreviewContent(
     state: PhotoPickerUiState.Preview,
     onConfirm: () -> Unit,
     onRetake: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onCrop: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -360,7 +375,7 @@ private fun PreviewContent(
         ) {
             Row(
                 modifier              = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment     = Alignment.CenterVertically
             ) {
                 // Retake
@@ -371,8 +386,22 @@ private fun PreviewContent(
                     modifier = Modifier.weight(1f).height(52.dp)
                 ) {
                     Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text("Retake", style = MaterialTheme.typography.bodyMedium)
+                }
+
+                // ✂️ Crop — only for photos, not videos
+                if (!state.isVideo) {
+                    OutlinedButton(
+                        onClick = onCrop,
+                        shape   = RoundedCornerShape(50),
+                        colors  = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                        modifier = Modifier.weight(1f).height(52.dp)
+                    ) {
+                        Icon(Icons.Default.CheckCircle, null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("Crop", style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
 
                 // Use this

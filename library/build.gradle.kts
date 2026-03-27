@@ -69,7 +69,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId    = "com.github.NtbAndroidDev"
                 artifactId = "compose-media-picker"
-                version    = "1.0.7"
+                version    = "1.0.8"
             }
         }
     }

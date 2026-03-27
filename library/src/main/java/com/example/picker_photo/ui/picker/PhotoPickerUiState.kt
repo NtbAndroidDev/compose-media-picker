@@ -42,11 +42,13 @@ sealed interface PhotoPickerUiState {
     /**
      * Full-screen preview after a camera capture.
      * [cameraType] is stored so "Retake" re-launches the same camera mode.
+     * [showCropper] when true, overlays [ImageCropperScreen] on top of the preview.
      */
     data class Preview(
         val uri: Uri,
         val isVideo: Boolean,
-        val cameraType: CameraType
+        val cameraType: CameraType,
+        val showCropper: Boolean = false
     ) : PhotoPickerUiState
 }
 

@@ -118,6 +118,9 @@ fun PhotoPickerEntryPoint(
         onPreviewConfirm     = viewModel::onPreviewConfirm,
         onPreviewRetake      = viewModel::onPreviewRetake,
         onPreviewCancel      = viewModel::onPreviewCancel,
+        onCropRequested      = viewModel::onCropRequested,
+        onCropCompleted      = viewModel::onCropCompleted,
+        onCropCancelled      = viewModel::onCropCancelled,
         modifier             = modifier
     )
 }
